@@ -20,7 +20,6 @@
 }];
 
 var onMatch = function(name, val) {
-  console.log('match', name, val);
   $('input[name="' + name + '"]').val(val);
 }
 
@@ -39,4 +38,23 @@ $(document).ready(function() {
   $('textarea').on('change keyup paste', function() {
     form.addText($(this).val());
   });
-});</script></head><body ng-app="App"><div class="container"><div class="row"><div class="col-xs-12 col-lg-10 col-lg-offset-1"><h1>Sonoform Demo</h1><form id="Sonoform"></form><textarea rows="10" placeholder="Type here to fill out the form" class="form-control"></textarea></div></div></div></body></html>
+});
+
+function startListening() {
+  var recognition = new webkitSpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.onstart = function() {console.log('start')}
+  recognition.onerror = function() {console.log('err', arguments)}
+  recognition.onresult = function(event) {
+    console.log('resu');
+    var transcript = '';
+    for (var i = event.resultIndex; i < event.results.length; ++i) {
+      transcript += event.results[i];
+    }
+    console.log('t', transcript);
+    $('textarea').val(transcript);
+  }
+  recognition.start();
+}
+</script></head><body ng-app="App"><div class="container"><div class="row"><div class="col-xs-12 col-lg-10 col-lg-offset-1"><h1>Sonoform Demo</h1><form id="Sonoform"></form><div class="form-group"><a onclick="startListening()" class="btn btn-lg btn-primary">Listen</a></div><textarea rows="10" placeholder="Type here to fill out the form" class="form-control"></textarea></div></div></div></body></html>
