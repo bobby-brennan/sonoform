@@ -9,7 +9,7 @@ html
 
     script(src="https://code.jquery.com/jquery-2.2.2.min.js")
     script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js")
-    script(src="/lib/sonoform.js")
+    script(src="lib/sonoform.js")
 
     script.
       var inputs = [{
@@ -45,6 +45,9 @@ html
 
       $(document).ready(function() {
         $('.stop-button').hide();
+        if (!window.webkitSpeechRecognition) {
+          $('.listen-buttons').html('<div class="alert alert-warning">Your browser does not support WebSpeech.</div>')
+        }
         $('#Sonoform').html(inputs.map(function(i) {
           return '<div class="form-group">' +
                    '<label>' + i.name + '</label>' +
@@ -94,7 +97,7 @@ html
         .col-xs-12.col-lg-10.col-lg-offset-1
           h1 Sonoform Demo
           form#Sonoform
-          .form-group
+          .form-group.listen-buttons
             a.btn.btn-lg.btn-primary.start-button(onclick="recognition.start()") Listen
             a.btn.btn-lg.btn-danger.stop-button(onclick="recognition.stop()") Stop Listening
           textarea.form-control(rows="10" placeholder="Type here to fill out the form")

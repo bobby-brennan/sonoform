@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta content="IE=edge" http-equiv="X-UA-Compatible"><meta content="width=device-width, initial-scale=1, minimum-scale=1.0, user-scalable=no" name="viewport"><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"><script src="https://code.jquery.com/jquery-2.2.2.min.js"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script><script src="/lib/sonoform.js"></script><script>var inputs = [{
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta content="IE=edge" http-equiv="X-UA-Compatible"><meta content="width=device-width, initial-scale=1, minimum-scale=1.0, user-scalable=no" name="viewport"><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"><script src="https://code.jquery.com/jquery-2.2.2.min.js"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script><script src="lib/sonoform.js"></script><script>var inputs = [{
   name: 'name',
   type: 'text',
   patterns: [/name is (\w+)/, /named? (\w+)/, /^(\w+) is a/],
@@ -31,6 +31,9 @@ var onMatch = function(name, val) {
 
 $(document).ready(function() {
   $('.stop-button').hide();
+  if (!window.webkitSpeechRecognition) {
+    $('.listen-buttons').html('<div class="alert alert-warning">Your browser does not support WebSpeech.</div>')
+  }
   $('#Sonoform').html(inputs.map(function(i) {
     return '<div class="form-group">' +
              '<label>' + i.name + '</label>' +
@@ -73,4 +76,4 @@ recognition.onresult = function(event) {
   $('textarea').val(transcript);
   form.addText(transcript);
 }
-</script></head><body ng-app="App"><div class="container"><div class="row"><div class="col-xs-12 col-lg-10 col-lg-offset-1"><h1>Sonoform Demo</h1><form id="Sonoform"></form><div class="form-group"><a onclick="recognition.start()" class="btn btn-lg btn-primary start-button">Listen</a><a onclick="recognition.stop()" class="btn btn-lg btn-danger stop-button">Stop Listening</a></div><textarea rows="10" placeholder="Type here to fill out the form" class="form-control"></textarea><h3>Try typing or saying one of these examples:</h3><div id="Examples"></div></div></div></div></body></html>
+</script></head><body ng-app="App"><div class="container"><div class="row"><div class="col-xs-12 col-lg-10 col-lg-offset-1"><h1>Sonoform Demo</h1><form id="Sonoform"></form><div class="form-group listen-buttons"><a onclick="recognition.start()" class="btn btn-lg btn-primary start-button">Listen</a><a onclick="recognition.stop()" class="btn btn-lg btn-danger stop-button">Stop Listening</a></div><textarea rows="10" placeholder="Type here to fill out the form" class="form-control"></textarea><h3>Try typing or saying one of these examples:</h3><div id="Examples"></div></div></div></div></body></html>
