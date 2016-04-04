@@ -51,5 +51,17 @@ describe('Sonoform', function() {
       }
     });
     form.addText("This dog, named Lucy, is age 2. She has her Bordetella and rabies vaccines and has a blood pressure of 120 over 80");
-  })
+  });
+
+  it('should parse numbers', function(done) {
+    var form = new Sonoform({
+      inputs: [{name: 'age', type: 'number', patterns: [/(\d+) years old/]}],
+      onMatch: function(name, val) {
+        expect(name).to.equal('age');
+        expect(val).to.equal(2);
+        done();
+      }
+    });
+    form.addText("Two years old");
+  });
 })
