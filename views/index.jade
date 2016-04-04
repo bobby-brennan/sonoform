@@ -15,7 +15,7 @@ html
       var inputs = [{
         name: 'name',
         type: 'text',
-        patterns: [/name is (\w+)/, /named? (\w+)/, /^(\w+) is a/],
+        patterns: [/name is (\w+)/, /named? (\w+)/, /^(\w+) is /],
       }, {
         name: 'age',
         type: 'number',
@@ -43,6 +43,11 @@ html
         $('input[name="' + name + '"]').val(val);
       }
 
+      var form = new Sonoform({
+        inputs: inputs,
+        onMatch: onMatch,
+      });
+
       $(document).ready(function() {
         $('.stop-button').hide();
         if (!window.webkitSpeechRecognition) {
@@ -58,10 +63,6 @@ html
           return '<p><i>' + e + '</i></p>';
         }).join('\n'));
 
-        var form = new Sonoform({
-          inputs: inputs,
-          onMatch: onMatch,
-        });
         $('textarea').on('change keyup paste', function() {
           form.addText($(this).val());
         });
