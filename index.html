@@ -34,6 +34,11 @@ var form = new Sonoform({
   onMatch: onMatch,
 });
 
+function parse() {
+  $('input').val('');
+  form.addText($('textarea').val());
+}
+
 $(document).ready(function() {
   $('.stop-button').hide();
   if (!window.webkitSpeechRecognition) {
@@ -49,9 +54,7 @@ $(document).ready(function() {
     return '<p><i>' + e + '</i></p>';
   }).join('\n'));
 
-  $('textarea').on('change keyup paste', function() {
-    form.addText($(this).val());
-  });
+  $('textarea').on('change keyup paste', parse);
 });
 
 var recognition = new webkitSpeechRecognition();
@@ -61,6 +64,7 @@ recognition.interimResults = true;
 recognition.onstart = function() {
   $('.start-button').hide();
   $('.stop-button').show();
+  $('textarea').val('');
 }
 recognition.onend = function() {
   $('.start-button').show();
@@ -71,10 +75,10 @@ recognition.onerror = function() {
 }
 recognition.onresult = function(event) {
   var transcript = '';
-  for (var i = event.resultIndex; i < event.results.length; ++i) {
+  for (var i = 0; i < event.results.length; ++i) {
     transcript += event.results[i][0].transcript;
   }
   $('textarea').val(transcript);
-  form.addText(transcript);
+  parse();
 }
 </script></head><body ng-app="App"><div class="container"><div class="row"><div class="col-xs-12 col-lg-10 col-lg-offset-1"><h1>Sonoform Demo</h1><form id="Sonoform"></form><div class="form-group listen-buttons"><a onclick="recognition.start()" class="btn btn-lg btn-primary start-button">Listen</a><a onclick="recognition.stop()" class="btn btn-lg btn-danger stop-button">Stop Listening</a></div><textarea rows="10" placeholder="Type here to fill out the form" class="form-control"></textarea><h3>Try typing or saying one of these examples:</h3><div id="Examples"></div></div></div></div></body></html>

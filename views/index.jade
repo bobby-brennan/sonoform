@@ -48,6 +48,11 @@ html
         onMatch: onMatch,
       });
 
+      function parse() {
+        $('input').val('');
+        form.addText($('textarea').val());
+      }
+
       $(document).ready(function() {
         $('.stop-button').hide();
         if (!window.webkitSpeechRecognition) {
@@ -63,9 +68,7 @@ html
           return '<p><i>' + e + '</i></p>';
         }).join('\n'));
 
-        $('textarea').on('change keyup paste', function() {
-          form.addText($(this).val());
-        });
+        $('textarea').on('change keyup paste', parse);
       });
 
       var recognition = new webkitSpeechRecognition();
@@ -75,6 +78,7 @@ html
       recognition.onstart = function() {
         $('.start-button').hide();
         $('.stop-button').show();
+        $('textarea').val('');
       }
       recognition.onend = function() {
         $('.start-button').show();
@@ -85,11 +89,11 @@ html
       }
       recognition.onresult = function(event) {
         var transcript = '';
-        for (var i = event.resultIndex; i < event.results.length; ++i) {
+        for (var i = 0; i < event.results.length; ++i) {
           transcript += event.results[i][0].transcript;
         }
         $('textarea').val(transcript);
-        form.addText(transcript);
+        parse();
       }
 
   body(ng-app="App")
