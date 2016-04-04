@@ -16,5 +16,40 @@ describe('Sonoform', function() {
       }
     });
     form.addText("He is a 23 year old male");
+  });
+
+  it('should do complex filling', function(done) {
+    var numMatches = 0;
+    var form = new Sonoform({
+      inputs: [{
+        name: 'name',
+        type: 'text',
+        patterns: [/name is (\w+)/, /named? (\w+)/],
+      }, {
+        name: 'age',
+        type: 'number',
+        patterns: [/(\d+) years? old/, /aged? (\d+)/],
+      }, {
+        name: 'vaccinations',
+        type: 'list',
+        choices: ['rabies', 'measles', 'bordetella', 'worms'],
+      }, {
+        name: 'blood_pressure',
+        type: 'text',
+        patterns: [/\d+ over \d+/, /\d+\s*\/\s*\d+/],
+        canonicalize: function(val) {
+          return val.replace(/\s*(over|\/)\s*/, '/');
+        }
+      }],
+
+      onMatch: function(name, val) {
+        if (name === 'name') expect(val).to.equal('Lucy');
+        if (name === 'age') expect(val).to.equal(2);
+        if (name === 'vaccinations') expect(val).to.deep.equal(['rabies', 'bordetella']);
+        if (name === 'blood_pressure') expect(val).to.equal('120/80');
+        if (++numMatches === 4) return done();
+      }
+    });
+    form.addText("This dog, named Lucy, is age 2. She has her bordetella and rabies vaccines and has a blood pressure of 120 over 80");
   })
 })
