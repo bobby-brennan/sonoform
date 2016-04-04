@@ -20,6 +20,7 @@
 }];
 
 var onMatch = function(name, val) {
+  console.log('match', name, val);
   $('input[name="' + name + '"]').val(val);
 }
 
@@ -27,7 +28,7 @@ $(document).ready(function() {
   $('#Sonoform').html(inputs.map(function(i) {
     return '<div class="form-group">' +
              '<label>' + i.name + '</label>' +
-             '<input type="' + i.type + '" class="form-control">' +
+             '<input type="' + i.type + '" class="form-control" name="' + i.name + '">' +
            '</div>';
   }).join('\n'));
 
@@ -35,7 +36,7 @@ $(document).ready(function() {
     inputs: inputs,
     onMatch: onMatch,
   });
-  $('textarea').change(function() {
+  $('textarea').on('change keyup paste', function() {
     form.addText($(this).val());
   });
-});</script></head><body ng-app="App"><div class="container"><div class="row"><div class="col-xs-12 col-lg-10 col-lg-offset-1"><h1>Sonoform Demo</h1><form id="Sonoform"></form><textarea rows="20" placeholder="Type here to fill out the form"></textarea></div></div></div></body></html>
+});</script></head><body ng-app="App"><div class="container"><div class="row"><div class="col-xs-12 col-lg-10 col-lg-offset-1"><h1>Sonoform Demo</h1><form id="Sonoform"></form><textarea rows="10" placeholder="Type here to fill out the form" class="form-control"></textarea></div></div></div></body></html>
