@@ -64,4 +64,21 @@ describe('Sonoform', function() {
     });
     form.addText("Two years old");
   });
+
+  it('should parse dates', function(done) {
+    var numMatched = 0;
+    var bday = new Date('09-23-1987');
+    var form = new Sonoform({
+      inputs: [{name: 'birthday', type: 'date', patterns: ['My birthday is (.*)']}],
+      onMatch: function(name, val) {
+        expect(name).to.equal('birthday');
+        expect(val.getTime()).to.equal(bday.getTime());
+        if (++numMatched === 4) done();
+      }
+    });
+    form.addText('My birthday is September 23, 1987 every day of the year');
+    form.addText('My birthday is 9/23/1987. OK?');
+    form.addText('My birthday is 9-23-1987');
+    form.addText('My birthday is Sept. 23, 1987');
+  })
 })
