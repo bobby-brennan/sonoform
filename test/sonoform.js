@@ -32,6 +32,10 @@ describe('Sonoform', function() {
       }, {
         name: 'vaccinations',
         type: 'list',
+        patterns: [
+          /vaccinat(:?ion|ions|ed)(:? (:?with|of)? (.*))/,
+          /(.*) vaccines?/
+        ],
         choices: ['rabies', 'measles', 'bordetella', 'worms'],
       }, {
         name: 'blood_pressure',
@@ -45,7 +49,7 @@ describe('Sonoform', function() {
       onMatch: function(name, val) {
         if (name === 'name') expect(val).to.equal('Lucy');
         if (name === 'age') expect(val).to.equal(2);
-        if (name === 'vaccinations') expect(val).to.deep.equal(['rabies', 'bordetella']);
+        if (name === 'vaccinations') expect(val).to.deep.equal(['Bordetella', 'rabies']);
         if (name === 'blood_pressure') expect(val).to.equal('120/80');
         if (++numMatches === 4) return done();
       }
@@ -80,5 +84,26 @@ describe('Sonoform', function() {
     form.addText('My birthday is 9/23/1987. OK?');
     form.addText('My birthday is 9-23-1987');
     form.addText('My birthday is Sept. 23rd, 1987');
+  });
+
+  it('should allow lists', function(done) {
+    var numMatched = 0;
+    var form = new Sonoform({
+      inputs: [{
+        name: 'pets',
+        type: 'list',
+        patterns: ['.*'],
+      }],
+      onMatch: function(name, val) {
+        expect(val).to.deep.equal(outputs[numMatched++]);
+        if (numMatched === outputs.length) done();
+      }
+    });
+    var outputs = [
+      ['a', 'b', 'c'],
+      ['foo', 'bar'],
+    ];
+    form.addText('a, b, and c');
+    form.addText('foo bar');
   })
 })
