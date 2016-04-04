@@ -79,6 +79,6 @@ describe('Sonoform', function() {
     form.addText('My birthday is September 23, 1987 every day of the year');
     form.addText('My birthday is 9/23/1987. OK?');
     form.addText('My birthday is 9-23-1987');
-    form.addText('My birthday is Sept. 23, 1987');
+    form.addText('My birthday is Sept. 23rd, 1987');
   })
 })
