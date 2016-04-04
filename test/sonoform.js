@@ -50,6 +50,6 @@ describe('Sonoform', function() {
         if (++numMatches === 4) return done();
       }
     });
-    form.addText("This dog, named Lucy, is age 2. She has her bordetella and rabies vaccines and has a blood pressure of 120 over 80");
+    form.addText("This dog, named Lucy, is age 2. She has her Bordetella and rabies vaccines and has a blood pressure of 120 over 80");
   })
 })
