@@ -15,11 +15,11 @@ html
       var inputs = [{
         name: 'name',
         type: 'text',
-        patterns: [/name is (\w+)/, /named? (\w+)/],
+        patterns: [/name is (\w+)/, /named? (\w+)/, /^(\w+) is a/],
       }, {
         name: 'age',
         type: 'number',
-        patterns: [/(\d+) years? old/, /aged? (\d+)/],
+        patterns: [/(\d+).years?.old/, /aged? (\d+)/],
       }, {
         name: 'vaccinations',
         type: 'list',
@@ -33,16 +33,26 @@ html
         }
       }];
 
+      var examples = [
+        "Lucy is a two-year-old dog. She has her rabies and bordetella vaccines, and a blood pressure of 120 over 80",
+        "Here we have a dog named Munch, 8 years old. His blood pressure measures 140/90",
+        "Cat, 2 years old, name Taco. Blood pressure 110/80, has been vaccinated for rabies",
+      ]
+
       var onMatch = function(name, val) {
         $('input[name="' + name + '"]').val(val);
       }
 
       $(document).ready(function() {
+        $('.stop-button').hide();
         $('#Sonoform').html(inputs.map(function(i) {
           return '<div class="form-group">' +
                    '<label>' + i.name + '</label>' +
                    '<input type="' + i.type + '" class="form-control" name="' + i.name + '">' +
                  '</div>';
+        }).join('\n'));
+        $('#Examples').html(examples.map(function(e) {
+          return '<p><i>' + e + '</i></p>';
         }).join('\n'));
 
         var form = new Sonoform({
@@ -54,22 +64,28 @@ html
         });
       });
 
-      function startListening() {
-        var recognition = new webkitSpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.onstart = function() {console.log('start')}
-        recognition.onerror = function() {console.log('err', arguments)}
-        recognition.onresult = function(event) {
-          console.log('resu');
-          var transcript = '';
-          for (var i = event.resultIndex; i < event.results.length; ++i) {
-            transcript += event.results[i];
-          }
-          console.log('t', transcript);
-          $('textarea').val(transcript);
+      var recognition = new webkitSpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      recognition.onstart = function() {
+        $('.start-button').hide();
+        $('.stop-button').show();
+      }
+      recognition.onend = function() {
+        $('.start-button').show();
+        $('.stop-button').hide();
+      }
+      recognition.onerror = function() {
+        console.log('err', arguments)
+      }
+      recognition.onresult = function(event) {
+        var transcript = '';
+        for (var i = event.resultIndex; i < event.results.length; ++i) {
+          transcript += event.results[i][0].transcript;
         }
-        recognition.start();
+        $('textarea').val(transcript);
+        form.addText(transcript);
       }
 
   body(ng-app="App")
@@ -79,5 +95,9 @@ html
           h1 Sonoform Demo
           form#Sonoform
           .form-group
-            a.btn.btn-lg.btn-primary(onclick="startListening()") Listen
+            a.btn.btn-lg.btn-primary.start-button(onclick="recognition.start()") Listen
+            a.btn.btn-lg.btn-danger.stop-button(onclick="recognition.stop()") Stop Listening
           textarea.form-control(rows="10" placeholder="Type here to fill out the form")
+          h3 Try typing or saying one of these examples:
+          #Examples
+

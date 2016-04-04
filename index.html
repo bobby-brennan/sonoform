@@ -1,11 +1,11 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><meta content="IE=edge" http-equiv="X-UA-Compatible"><meta content="width=device-width, initial-scale=1, minimum-scale=1.0, user-scalable=no" name="viewport"><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"><script src="https://code.jquery.com/jquery-2.2.2.min.js"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script><script src="/lib/sonoform.js"></script><script>var inputs = [{
   name: 'name',
   type: 'text',
-  patterns: [/name is (\w+)/, /named? (\w+)/],
+  patterns: [/name is (\w+)/, /named? (\w+)/, /^(\w+) is a/],
 }, {
   name: 'age',
   type: 'number',
-  patterns: [/(\d+) years? old/, /aged? (\d+)/],
+  patterns: [/(\d+).years?.old/, /aged? (\d+)/],
 }, {
   name: 'vaccinations',
   type: 'list',
@@ -19,16 +19,26 @@
   }
 }];
 
+var examples = [
+  "Lucy is a two-year-old dog. She has her rabies and bordetella vaccines, and a blood pressure of 120 over 80",
+  "Here we have a dog named Munch, 8 years old. His blood pressure measures 140/90",
+  "Cat, 2 years old, name Taco. Blood pressure 110/80, has been vaccinated for rabies",
+]
+
 var onMatch = function(name, val) {
   $('input[name="' + name + '"]').val(val);
 }
 
 $(document).ready(function() {
+  $('.stop-button').hide();
   $('#Sonoform').html(inputs.map(function(i) {
     return '<div class="form-group">' +
              '<label>' + i.name + '</label>' +
              '<input type="' + i.type + '" class="form-control" name="' + i.name + '">' +
            '</div>';
+  }).join('\n'));
+  $('#Examples').html(examples.map(function(e) {
+    return '<p><i>' + e + '</i></p>';
   }).join('\n'));
 
   var form = new Sonoform({
@@ -40,21 +50,27 @@ $(document).ready(function() {
   });
 });
 
-function startListening() {
-  var recognition = new webkitSpeechRecognition();
-  recognition.continuous = true;
-  recognition.interimResults = true;
-  recognition.onstart = function() {console.log('start')}
-  recognition.onerror = function() {console.log('err', arguments)}
-  recognition.onresult = function(event) {
-    console.log('resu');
-    var transcript = '';
-    for (var i = event.resultIndex; i < event.results.length; ++i) {
-      transcript += event.results[i];
-    }
-    console.log('t', transcript);
-    $('textarea').val(transcript);
-  }
-  recognition.start();
+var recognition = new webkitSpeechRecognition();
+recognition.continuous = true;
+recognition.interimResults = true;
+
+recognition.onstart = function() {
+  $('.start-button').hide();
+  $('.stop-button').show();
 }
-</script></head><body ng-app="App"><div class="container"><div class="row"><div class="col-xs-12 col-lg-10 col-lg-offset-1"><h1>Sonoform Demo</h1><form id="Sonoform"></form><div class="form-group"><a onclick="startListening()" class="btn btn-lg btn-primary">Listen</a></div><textarea rows="10" placeholder="Type here to fill out the form" class="form-control"></textarea></div></div></div></body></html>
+recognition.onend = function() {
+  $('.start-button').show();
+  $('.stop-button').hide();
+}
+recognition.onerror = function() {
+  console.log('err', arguments)
+}
+recognition.onresult = function(event) {
+  var transcript = '';
+  for (var i = event.resultIndex; i < event.results.length; ++i) {
+    transcript += event.results[i][0].transcript;
+  }
+  $('textarea').val(transcript);
+  form.addText(transcript);
+}
+</script></head><body ng-app="App"><div class="container"><div class="row"><div class="col-xs-12 col-lg-10 col-lg-offset-1"><h1>Sonoform Demo</h1><form id="Sonoform"></form><div class="form-group"><a onclick="recognition.start()" class="btn btn-lg btn-primary start-button">Listen</a><a onclick="recognition.stop()" class="btn btn-lg btn-danger stop-button">Stop Listening</a></div><textarea rows="10" placeholder="Type here to fill out the form" class="form-control"></textarea><h3>Try typing or saying one of these examples:</h3><div id="Examples"></div></div></div></div></body></html>
