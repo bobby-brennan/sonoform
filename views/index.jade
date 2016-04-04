@@ -1,0 +1,23 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(content='IE=edge', http-equiv='X-UA-Compatible')
+    meta(content='width=device-width, initial-scale=1, minimum-scale=1.0, user-scalable=no', name='viewport')
+
+    script(src="/js/app.js")
+  body(ng-app="App")
+    .container
+      .row
+        .col-xs-12.col-lg-10.col-lg-offset-1
+          h1 Sonoform Demo
+          .form-group
+            label Name
+            input.form-control(type="text")
+          .form-group
+            label Age
+            input.form-control(type="number")
+          .form-group
+            label Nationality
+            input.form-control(type="text")
+
