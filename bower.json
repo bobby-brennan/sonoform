@@ -1,0 +1,18 @@
+{
+  "name": "sonoform",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "Bobby Brennan <bobby.brennan@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/bobby-brennan/sonoform",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
